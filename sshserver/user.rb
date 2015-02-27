@@ -21,6 +21,10 @@ class User
     shell(key).exec!(command)
   end
 
+  def self.logout key
+    @@shells[key] = nil
+  end
+
   private
   def self.shell key
     shell = @@shells[key]

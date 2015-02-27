@@ -14,6 +14,9 @@ loop do
     when 'login'
       result = User.login(request['login'], request['password'], request['key'], request['host'])
       client.puts result
+    when 'logout'
+      result = User.logout(request['key'])
+      client.puts result
     when 'exec'
       if User.login?(request['key'])
         client.puts User.exec(request['key'], request['line'])

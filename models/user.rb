@@ -28,6 +28,17 @@ class User
     response
   end
 
+  def self.logout session
+    socket = get_socket
+    socket.puts({
+        command: 'logout',
+        key: key(session),
+      }.to_json)
+    response = socket.gets
+    socket.close
+    response.strip
+  end
+
   private
   def self.get_socket
     TCPSocket.new('localhost', 2626)

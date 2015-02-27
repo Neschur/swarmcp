@@ -19,15 +19,26 @@ helpers do
 end
 
 get '/' do
-  session[:user] ? erb(:panel) : erb(:login)
+  session[:user] ? redirect('/panel') : erb(:login)
 end
 
 post '/login' do
   login = User.login(params[:user], session)
   if !login
     session[:error] = "Wrong username/password"
+    redirect '/'
   else
     session[:user] = params[:user][:name]
+    redirect '/panel'
   end
+end
+
+get '/logout' do
+  User.logout(session)
+  session[:user] = nil
   redirect '/'
+end
+
+get '/panel' do
+  !session[:user] ? redirect('/') : erb(:panel)
 end
