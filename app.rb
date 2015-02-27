@@ -39,10 +39,15 @@ get '/logout' do
   redirect '/'
 end
 
-get '/panel' do
-  !session[:user] ? redirect('/') : erb(:'panel/main', layout: :panel)
+def panel_erb page = nil
+  !session[:user] ? redirect('/') : erb(:"panel/#{page || 'main'}", layout: :panel)
 end
 
-get '/panel/*' do |url|
-  erb(:"panel/#{url}", layout: :panel)
+get '/panel' do
+  @info = User.command(session, 'cat /etc/lsb-release')
+  panel_erb
+end
+
+get '/panel/*' do |path|
+  panel_erb(path)
 end
