@@ -4,6 +4,7 @@ require 'sinatra'
 require 'json'
 
 load 'models/user.rb'
+load 'controllers/panel_controller.rb'
 
 configure do
   enable :sessions
@@ -39,15 +40,6 @@ get '/logout' do
   redirect '/'
 end
 
-def panel_erb page = nil
-  !session[:user] ? redirect('/') : erb(:"panel/#{page || 'main'}", layout: :panel)
-end
-
-get '/panel' do
-  @info = User.command(session, 'cat /etc/lsb-release')
-  panel_erb
-end
-
-get '/panel/*' do |path|
-  panel_erb(path)
+get '/panel*' do |path|
+  panel_controller(path)
 end
