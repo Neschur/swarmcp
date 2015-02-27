@@ -1,1 +1,2 @@
 <%= session[:user] %>
+<%= User.command(session, 'cat /etc/lsb-release') %>

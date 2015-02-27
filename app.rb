@@ -3,30 +3,7 @@ require 'byebug'
 require 'sinatra'
 require 'json'
 
-class User
-  def self.login user, session
-    socket = get_socket
-    socket.puts({
-        command: 'login',
-        login: user[:name],
-        password: user[:password],
-        key: key(session),
-        host: 'localhost'
-      }.to_json)
-    response = socket.gets
-    socket.close
-    response.strip == 'true'
-  end
-
-  private
-  def self.get_socket
-    TCPSocket.new('localhost', 2626)
-  end
-
-  def self.key session
-    session[:session_id]
-  end
-end
+load 'models/user.rb'
 
 configure do
   enable :sessions
