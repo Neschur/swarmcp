@@ -1,7 +1,71 @@
-.vertical-center {
-  min-height: 100%;
-  min-height: 100vh;
+body {
+  background-color: rgb(240, 240, 240);
+  margin-top: 20px;
+}
 
-  display: flex;
-  align-items: center;
+@media screen and (min-height: 480px) {
+  body {
+    margin-top: 200px;
+  }
+}
+
+@media screen and (min-height: 280px) and (max-height: 479px){
+  body {
+    margin-top: 100px;
+  }
+}
+
+form {
+  width: 200px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 380px){
+  form {
+    width: 90%;
+    margin: 0;
+  }
+}
+
+input {
+  background-color: rgb(255, 255, 255);
+  border-color: rgb(204, 204, 204);
+  border-radius: 4px;
+  border-style: solid;
+  border-width: 1px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  font-size: 14px;
+}
+
+.form-group {
+  padding-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+}
+
+.form-group input {
+  width: 100%;
+  text-indent: 10px;
+}
+
+input[type=submit]{
+  float: right;
+}
+
+.alert {
+  background-color: rgb(242, 222, 222);
+  border-color: rgb(235, 204, 209);
+  border-radius: 4px;
+  border-style: solid;
+  border-width: 1px;
+  color: rgb(169, 68, 66);
+  display: block;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  padding-top: 12px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
