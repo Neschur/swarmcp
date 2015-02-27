@@ -8,6 +8,7 @@ load 'controllers/panel_controller.rb'
 
 configure do
   enable :sessions
+  set :session_secret, (0...64).map { (33 + rand(93)).chr }.join
 end
 
 helpers do

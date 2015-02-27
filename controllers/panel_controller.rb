@@ -1,5 +1,5 @@
 def panel_erb page = nil
-  !session[:user] ? redirect('/') : erb(:"panel/#{page || 'main'}", layout: :panel)
+  !session[:user] ? redirect('/') : erb(:"panel/#{page}", layout: :panel)
 end
 
 def panel_controller page
