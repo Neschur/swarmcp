@@ -1,4 +1,4 @@
-class User
+class SSH
   def self.login user, session
     socket = get_socket
     socket.puts({

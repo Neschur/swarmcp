@@ -5,7 +5,7 @@ class User
   @@shells = {}
 
   def self.login name, password, key, host
-    shell = User.get_shell(name, password, host)
+    shell = get_shell(name, password, host)
     @@shells[key] = {
       shell: shell,
       time: Time.now,

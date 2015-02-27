@@ -26,7 +26,7 @@ get '/' do
 end
 
 post '/login' do
-  login = User.login(params[:user], session)
+  login = SSH.login(params[:user], session)
   if !login
     session[:error] = "Wrong username/password"
     redirect '/'
@@ -37,7 +37,7 @@ post '/login' do
 end
 
 get '/logout' do
-  User.logout(session)
+  SSH.logout(session)
   session[:user] = nil
   redirect '/'
 end

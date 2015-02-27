@@ -7,7 +7,7 @@ def panel_controller page
   page = 'main' if page.size < 1
   case page
   when 'main'
-    @info = User.command(session, 'cat /etc/lsb-release')
+    @info = SSH.command(session, 'cat /etc/lsb-release')
   end
   panel_erb(page)
 end
