@@ -22,7 +22,7 @@ class User
       }.to_json)
     response = []
     while line = socket.gets
-      response << line.strip
+      response << line.chop.force_encoding("utf-8")
     end
     socket.close
     response

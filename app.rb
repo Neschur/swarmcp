@@ -5,10 +5,11 @@ require 'json'
 
 load 'models/user.rb'
 load 'controllers/panel_controller.rb'
+load 'controllers/terminal_controller.rb'
 
 configure do
   enable :sessions
-  set :session_secret, (0...64).map { (33 + rand(93)).chr }.join
+  set :session_secret, (0...64).map { (33 + rand(93)).chr }.join if !ENV['DEBUG']
 end
 
 helpers do
@@ -39,6 +40,10 @@ get '/logout' do
   User.logout(session)
   session[:user] = nil
   redirect '/'
+end
+
+get '/panel/terminal/ajax=*' do |path|
+  terminal_controller(path)
 end
 
 get '/panel*' do |path|
