@@ -15,12 +15,7 @@
 		<![endif]-->
 	</head>
 	<body>
-		<div>
-      <%if @error then %>
-          <div class="alert alert-error"><%=@error%></div>
-      <% end %>
-      <%= yield %>
-		</div>
+    <%= yield %>
 
     <script src="/vendor/jquery-1.11.2.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
