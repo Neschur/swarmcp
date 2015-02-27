@@ -1,18 +1,40 @@
-<div class="jumbotron vertical-center">
-  <div class="col-md-5"></div>
-  <div class="col-md-2">
-  <%= flash %>
-    <form role="form" action="/login" method="post">
-      <div class="form-group">
-        <label class="control-label" for="user_name">Name</label>
-        <input class="form-control" type="text" name="user[name]" id="user_name">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>nexic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="jumbotron vertical-center">
+      <div class="col-md-5"></div>
+      <div class="col-md-2">
+      <%= flash %>
+        <form role="form" action="/login" method="post">
+          <div class="form-group">
+            <label class="control-label" for="user_name">Name</label>
+            <input class="form-control" type="text" name="user[name]" id="user_name">
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="user_password">Password</label>
+            <input class="form-control" type="password" name="user[password]" id="user_password">
+          </div>
+          <input type="submit" name="commit" value="Log In" class="btn btn-default">
+        </form>
       </div>
-      <div class="form-group">
-        <label class="control-label" for="user_password">Password</label>
-        <input class="form-control" type="password" name="user[password]" id="user_password">
-      </div>
-      <input type="submit" name="commit" value="Log In" class="btn btn-default">
-    </form>
-  </div>
-  <div class="col-md-5"></div>
-</div>
+      <div class="col-md-5"></div>
+    </div>
+
+    <script src="/vendor/jquery-1.11.2.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

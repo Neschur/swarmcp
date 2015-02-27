@@ -40,5 +40,9 @@ get '/logout' do
 end
 
 get '/panel' do
-  !session[:user] ? redirect('/') : erb(:panel)
+  !session[:user] ? redirect('/') : erb(:'panel/main', layout: :panel)
+end
+
+get '/panel/*' do |url|
+  erb(:"panel/#{url}", layout: :panel)
 end
