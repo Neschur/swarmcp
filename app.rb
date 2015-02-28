@@ -3,9 +3,7 @@ require 'byebug'
 require 'sinatra'
 require 'json'
 
-load 'models/user.rb'
-load 'controllers/panel_controller.rb'
-load 'controllers/terminal_controller.rb'
+load 'ssh.rb'
 
 configure do
   enable :sessions
@@ -42,10 +40,29 @@ get '/logout' do
   redirect '/'
 end
 
-get '/panel/terminal/ajax=*' do |path|
-  terminal_controller(path)
+get '/panel*' do |path|
+  redirect('/') if !session[:user]
+  path[0] = '' if path[0] == '/'
+
+  @plugins = Dir['plugins/*'].map{|p| p.sub('plugins/','')}
+
+  if path.size < 1
+    @info = SSH.command(session, 'cat /etc/lsb-release')
+    erb(:panel_main, layout: :panel)
+  else
+    def render_erb name
+      erb File.read("plugins/#{@plugin}/#{name}.erb"), layout: :panel
+    end
+
+    @plugin = path.split('/')[0]
+    path.sub!("#{@plugin}", ''); path[0] = '' if path[0] == '/'
+    @plugin_js_list = Dir["plugins/#{@plugin}/public/*.js"].map{|js|js.sub('/public','')}
+    load "plugins/#{@plugin}/controller.rb"
+    send("#{@plugin}_controller", path)
+  end
 end
 
-get '/panel*' do |path|
-  panel_controller(path)
+get '/plugins/*/*.js' do |plugin, filename|
+  content_type :js
+  File.read("plugins/#{plugin}/public/#{filename}.js")
 end
