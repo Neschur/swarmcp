@@ -1,4 +1,8 @@
 source "https://rubygems.org"
 
-gem "sinatra"
-gem 'byebug'
+gem 'sinatra'
+gem 'net-ssh'
+
+group :development do
+  gem 'byebug'
+end
