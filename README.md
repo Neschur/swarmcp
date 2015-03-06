@@ -1,1 +1,1 @@
-Control Panel for Linux sercers, written on ruby
+Control Panel for Linux servers, written on ruby

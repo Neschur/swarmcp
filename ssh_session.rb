@@ -1,11 +1,15 @@
-class SSH
-  def self.login user, session
+class SSHSession
+  def initialize session
+    @session = session
+  end
+
+  def login user
     socket = get_socket
     socket.puts({
         command: 'login',
         login: user[:name],
         password: user[:password],
-        key: key(session),
+        key: key,
         host: 'localhost',
       }.to_json)
     response = socket.gets
@@ -13,12 +17,12 @@ class SSH
     response.strip == 'true'
   end
 
-  def self.command session, line
+  def exec command
     socket = get_socket
     socket.puts({
         command: 'exec',
-        key: key(session),
-        line: line,
+        key: key,
+        line: command,
       }.to_json)
     response = []
     while line = socket.gets
@@ -28,11 +32,11 @@ class SSH
     response
   end
 
-  def self.logout session
+  def logout
     socket = get_socket
     socket.puts({
         command: 'logout',
-        key: key(session),
+        key: key,
       }.to_json)
     response = socket.gets
     socket.close
@@ -40,11 +44,11 @@ class SSH
   end
 
   private
-  def self.get_socket
+  def get_socket
     TCPSocket.new('localhost', 2626)
   end
 
-  def self.key session
-    session[:session_id]
+  def key
+    @session[:session_id]
   end
 end

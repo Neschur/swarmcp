@@ -23,7 +23,7 @@
           <li class="sidebar-brand">
             <a href="/panel">Main</a>
           </li>
-          <% panel_plugins.each do |id, plugin| %>
+          <% @panel_plugins.each do |id, plugin| %>
             <li>
               <a href="/panel/<%= id %>">
                 <%= plugin['name'] %>

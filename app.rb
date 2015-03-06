@@ -1,10 +1,10 @@
 require 'rubygems'
 require 'byebug' if ENV['DEBUG']
-require 'sinatra'
+require 'sinatra/base'
 require 'json'
 require 'yaml'
 
-require './ssh'
+require './ssh_session'
 
 class SwarmCP < Sinatra::Application
   configure do
@@ -19,20 +19,23 @@ class SwarmCP < Sinatra::Application
       session[:error] = nil
       "<div class='alert alert-danger'>#{message}</div>"
     end
+  end
 
-    def plugins
-      return @@plugins if defined?(@@plugins)
-      @@plugins = {}
+  before do
+    unless defined?(@@_plugins)
+      @@_plugins = {}
       Dir['plugins/*'].map do |plugin_dir|
         puts "load plugin: #{plugin_dir}"
-        @@plugins[plugin_dir.sub('plugins/','')] = YAML.load_file("#{plugin_dir}/info.yml")
+        @@_plugins[plugin_dir.sub('plugins/','')] = YAML.load_file("#{plugin_dir}/info.yml")
       end
-      @@plugins
+
+      @@_panel_plugins = @@_plugins.select{|id, plugin| plugin['panel']}
     end
 
-    def panel_plugins
-      plugins.select{|id, plugin| plugin['panel']}
-    end
+    @plugins = @@_plugins
+    @panel_plugins = @@_panel_plugins
+
+    @ssh_session ||= SSHSession.new(session)
   end
 
   get '/' do
@@ -40,7 +43,7 @@ class SwarmCP < Sinatra::Application
   end
 
   post '/login' do
-    login = SSH.login(params[:user], session)
+    login = @ssh_session.login(params[:user])
     if !login
       session[:error] = "Wrong username/password"
       redirect '/'
@@ -51,33 +54,38 @@ class SwarmCP < Sinatra::Application
   end
 
   get '/logout' do
-    SSH.logout(session)
+    @ssh_session.logout
     session[:user] = nil
     redirect '/'
   end
 
-  get '/panel*' do |path|
+  before '/panel*' do
     redirect('/') if !session[:user]
-    path[0] = '' if path[0] == '/'
+  end
 
-    if path.size < 1
-      @info = SSH.command(session, 'cat /etc/lsb-release')
-      erb(:dashboard, layout: :panel)
-    else
-      def render_erb name
-        erb File.read("plugins/#{@plugin_id}/#{name}.erb"), layout: :panel
-      end
+  # Dashboard
+  get /\/panel.{0,1}$/ do
+    @info = @ssh_session.exec('cat /etc/lsb-release')
+    erb(:dashboard, layout: :panel)
+  end
 
-      @plugin_id = path.split('/')[0]
-      path.sub!("#{@plugin_id}", ''); path[0] = '' if path[0] == '/'
-      @plugin_js_list = Dir["plugins/#{@plugin_id}/public/*.js"].map{|js|js.sub('/public','')}
-      load "plugins/#{@plugin_id}/#{plugins[@plugin_id]['panel']}"
-      send("#{@plugin_id}_controller", path)
+  get '/panel/*' do |path|
+    def render_erb name
+      erb File.read("plugins/#{@plugin_id}/#{name}.erb"), layout: :panel
     end
+
+    @plugin_id = path.split('/')[0]
+    @plugin_js_list = Dir["plugins/#{@plugin_id}/public/*.js"].map{|js|js.sub('/public','')}
+
+    path.sub!("#{@plugin_id}", ''); path[0] = '' if path[0] == '/'
+    load "plugins/#{@plugin_id}/#{@plugins[@plugin_id]['panel']}"
+    send("#{@plugin_id}_controller", path)
   end
 
   get '/plugins/*/*.js' do |plugin, filename|
     content_type :js
     File.read("plugins/#{plugin}/public/#{filename}.js")
   end
+
+  run!
 end
