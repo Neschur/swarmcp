@@ -48,7 +48,7 @@ get '/panel*' do |path|
 
   if path.size < 1
     @info = SSH.command(session, 'cat /etc/lsb-release')
-    erb(:panel_main, layout: :panel)
+    erb(:dashboard, layout: :panel)
   else
     def render_erb name
       erb File.read("plugins/#{@plugin}/#{name}.erb"), layout: :panel
