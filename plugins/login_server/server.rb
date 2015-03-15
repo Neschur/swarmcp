@@ -1,14 +1,21 @@
 require 'socket'
 require 'json'
-load 'user.rb'
+
+def log message
+  if @logger
+    @logger.puts message
+  else
+    puts message
+  end
+end
 
 server = TCPServer.open(2626)
-puts 'server started'
+log 'server started'
 loop do
   begin
     client = server.accept
     request = JSON.parse(client.gets)
-    puts (request['password'] ? request.merge({'password' => '****'}) : request)
+    log (request['password'] ? request.merge({'password' => '****'}) : request)
 
     case request['command']
     when 'login'
@@ -24,10 +31,10 @@ loop do
         client.puts nil
       end
     else
-      puts 'undifined command'
+      log 'undifined command'
     end
     client.close
   rescue StandardError => e
-    puts 'ERROR ' + e.to_s
+    log 'ERROR ' + e.to_s
   end
 end

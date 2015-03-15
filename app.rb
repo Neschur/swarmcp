@@ -22,17 +22,10 @@ class SwarmCP < Sinatra::Application
   end
 
   before do
-    unless defined?(@@_plugins)
-      @@_plugins = {}
-      Dir['plugins/*'].map do |plugin_dir|
-        puts "load plugin: #{plugin_dir}"
-        @@_plugins[plugin_dir.sub('plugins/','')] = YAML.load_file("#{plugin_dir}/info.yml")
-      end
-
-      @@_panel_plugins = @@_plugins.select{|id, plugin| plugin['panel']}
+    unless defined?(@@_panel_plugins)
+      @@_panel_plugins = $plugins.select{|id, plugin| plugin['panel']}
     end
 
-    @plugins = @@_plugins
     @panel_plugins = @@_panel_plugins
 
     @ssh_session ||= SSHSession.new(session)
@@ -78,7 +71,7 @@ class SwarmCP < Sinatra::Application
     @plugin_js_list = Dir["plugins/#{@plugin_id}/public/*.js"].map{|js|js.sub('/public','')}
 
     path.sub!("#{@plugin_id}", ''); path[0] = '' if path[0] == '/'
-    load "plugins/#{@plugin_id}/#{@plugins[@plugin_id]['panel']}"
+    load "plugins/#{@plugin_id}/#{@panel_plugins[@plugin_id]['panel']}"
     send("#{@plugin_id}_controller", path)
   end
 
@@ -86,6 +79,4 @@ class SwarmCP < Sinatra::Application
     content_type :js
     File.read("plugins/#{plugin}/public/#{filename}.js")
   end
-
-  run!
 end
