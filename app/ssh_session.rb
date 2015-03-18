@@ -1,6 +1,7 @@
 class SSHSession
-  def initialize session
+  def initialize session, port
     @session = session
+    @port = port
   end
 
   def login user
@@ -45,7 +46,7 @@ class SSHSession
 
   private
   def get_socket
-    TCPSocket.new('localhost', 2626)
+    TCPSocket.new('localhost', @port)
   end
 
   def key

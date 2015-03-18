@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'sinatra/base'
 require 'json'
-require 'yaml'
 
 require './app/ssh_session'
 
@@ -27,7 +26,7 @@ class SwarmCP < Sinatra::Application
 
     @panel_plugins = @@_panel_plugins
 
-    @ssh_session ||= SSHSession.new(session)
+    @ssh_session ||= SSHSession.new(session, CONFIG['login_server']['port'])
   end
 
   get '/' do

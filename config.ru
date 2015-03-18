@@ -1,4 +1,10 @@
+require 'yaml'
+
 $debug = ['development', 'test', nil].include?(ENV['RACK_ENV'])
+$debug.freeze
+
+CONFIG = YAML.load_file('config.yml')
+CONFIG.freeze
 
 require 'byebug' if $debug
 

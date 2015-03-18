@@ -5,7 +5,7 @@ module Plugins
   module LoginServer
     class Server
       def initialize logger
-        @server = TCPServer.open(2626)
+        @server = TCPServer.open(CONFIG['login_server']['port'])
         logger.puts 'server started'
         loop do
           begin
