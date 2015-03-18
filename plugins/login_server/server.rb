@@ -1,40 +1,46 @@
 require 'socket'
 require 'json'
 
-def log message
-  if @logger
-    @logger.puts message
-  else
-    puts message
-  end
-end
+module Plugins
+  module LoginServer
+    class Server
+      def initialize logger
+        @server = TCPServer.open(2626)
+        logger.puts 'server started'
+        loop do
+          begin
+            client = @server.accept
+            request = JSON.parse(client.gets)
+            logger.puts (request['password'] ? request.merge({'password' => '****'}) : request)
 
-server = TCPServer.open(2626)
-log 'server started'
-loop do
-  begin
-    client = server.accept
-    request = JSON.parse(client.gets)
-    log (request['password'] ? request.merge({'password' => '****'}) : request)
+            user = User.new(request['key'])
 
-    case request['command']
-    when 'login'
-      result = User.login(request['login'], request['password'], request['key'], request['host'])
-      client.puts result
-    when 'logout'
-      result = User.logout(request['key'])
-      client.puts result
-    when 'exec'
-      if User.login?(request['key'])
-        client.puts User.exec(request['key'], request['line'])
-      else
-        client.puts nil
+            case request['command']
+            when 'login'
+              result = user.login(request['login'], request['password'], request['host'])
+              client.puts result
+            when 'logout'
+              result = user.logout
+              client.puts result
+            when 'exec'
+              if user.login?
+                client.puts user.exec(request['line'])
+              else
+                client.puts nil
+              end
+            else
+              logger.puts 'undifined command'
+            end
+            client.close
+          rescue StandardError => e
+            logger.puts 'ERROR ' + e.to_s
+          end
+        end
       end
-    else
-      log 'undifined command'
+
+      def destroy
+        @server.close
+      end
     end
-    client.close
-  rescue StandardError => e
-    log 'ERROR ' + e.to_s
   end
 end

@@ -1,15 +1,14 @@
 require 'rubygems'
-require 'byebug' if ENV['DEBUG']
 require 'sinatra/base'
 require 'json'
 require 'yaml'
 
-require './ssh_session'
+require './app/ssh_session'
 
 class SwarmCP < Sinatra::Application
   configure do
     enable :sessions
-    set :session_secret, (0...64).map { (33 + rand(93)).chr }.join if !ENV['DEBUG']
+    set :session_secret, (0...64).map { (33 + rand(93)).chr }.join unless $debug
   end
 
   helpers do
@@ -32,7 +31,7 @@ class SwarmCP < Sinatra::Application
   end
 
   get '/' do
-    session[:user] ? redirect('/panel') : erb(:login)
+    session[:user] ? redirect('/panel') : erb(:'./login')
   end
 
   post '/login' do

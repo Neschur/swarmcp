@@ -1,1 +1,2 @@
 require: user.rb, server.rb
+create: Server
