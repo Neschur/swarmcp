@@ -12,6 +12,7 @@ require './app/plugins'
 $plugins = Plugins::Manager.load_plugins
 
 require './app'
+
 unless $debug
   run SwarmCP
 else

@@ -1,0 +1,3 @@
+name: System Monitor
+panel: controller.rb
+require: server.rb
